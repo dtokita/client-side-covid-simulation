@@ -1,0 +1,43 @@
+.simulation-container {
+    border: 3px solid white;
+}
+
+.control-panel-container {
+    border: 1px solid white;
+}
+
+.graph-container {
+    border: 1px solid white;
+}
+
+.input-group-text {
+    font-size: 0.8vw;
+}
+
+input {
+    min-width: 0px;
+    min-height: 0px;
+}
+
+#simulation-container div {
+    position: absolute;
+    border-radius: 50%;
+    height: 7px;
+    width: 7px;
+}
+
+#simulation-container .vulnerable {
+    background-color: black;
+}
+
+#simulation-container .infected {
+    background-color: red;
+}
+
+#simulation-container .recovered {
+    background-color: green;
+}
+
+#simulation-container .dead {
+    background-color: purple;
+}

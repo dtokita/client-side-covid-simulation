@@ -13,12 +13,153 @@
 
 <body>
 
+<nav class="navbar navbar-light bg-light">
+    <span class="navbar-brand mb-0 h1">Community Spread Simulator</span>
+</nav>
+
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-9">
+            <div class="container-fluid simulation-container" id="simulation-container">
+                &nbsp;
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="container-fluid control-panel-container">
+
+                <br>
+
+                <h5 class="text-center">Control Panel</h5>
+
+                <div class="container-fluid" style="text-align: center;">
+                    <div class="btn-group">
+                        <button class="btn btn-secondary btn-sm" type="button">
+                            Presets
+                        </button>
+                        <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="?preset=covid19">COVID-19</a>
+                            <a class="dropdown-item" href="?preset=spanishflu">Spanish Flu</a>
+                        </div>
+                    </div>
+                </div>
+
+                <br>
+
+                <div class="container-fluid">
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="number-of-blocks-label">Number of Blocks</span>
+                        </div>
+                        <input type="number" class="form-control" id="number-of-blocks" aria-describedby="number-of-blocks-label" value="1000">
+                    </div>
+                </div>
+
+                <div class="container-fluid">
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="transmission-rate-label">Transmission Rate</span>
+                        </div>
+                        <input type="number" class="form-control" id="transmission-rate" aria-describedby="transmission-rate-label" value="30">
+                        <div class="input-group-append">
+                            <span class="input-group-text">%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container-fluid">
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="death-rate-label">Death Rate</span>
+                        </div>
+                        <input type="number" class="form-control" id="death-rate" aria-describedby="death-rate-label" value="5">
+                        <div class="input-group-append">
+                            <span class="input-group-text">%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container-fluid">
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="incubation-period-label">Avg. Incubation Period</span>
+                        </div>
+                        <input type="number" class="form-control" id="incubation-period" aria-describedby="incubation-period-label" value="10">
+                        <div class="input-group-append">
+                            <span class="input-group-text">days</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container-fluid">
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="infection-radius-label">Infection Radius</span>
+                        </div>
+                        <input type="number" class="form-control" id="infection-radius" aria-describedby="infection-radius-label" value="20">
+                        <div class="input-group-append">
+                            <span class="input-group-text">px</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container-fluid">
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="social-distancing-factor-label">Social Distancing Factor</span>
+                        </div>
+                        <input type="number" class="form-control" id="social-distancing-factor" aria-describedby="social-distancing-factor-label" value="10">
+                        <div class="input-group-append">
+                            <span class="input-group-text">%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <br>
+
+                <div class="container-fluid" style="text-align: center;">
+                    <button type="button" class="btn btn-success btn-sm" id="start-simulation">Start</button>
+                    <button type="button" class="btn btn-danger btn-sm" id="stop-simulation">Stop</button>
+                    <button type="button" class="btn btn-warning btn-sm" id="resume-simulation">Resume</button>
+                </div>
+
+                <br>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="container-fluid graph-container" id="graph-container">
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+<footer class="page-footer font-small blue">
+
+    <div class="footer-copyright text-center py-3">Made by:
+        <a href="https://www.linkedin.com/in/dtokita/"> Dylan Tokita</a>
+    </div>
+
+</footer>
+
 </body>
 
 <!-- Vendor JS -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="../js/anime.min.js"></script>
 
 <!-- User JS -->
 <script src="../js/community.js"></script>
