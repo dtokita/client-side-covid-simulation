@@ -6,6 +6,7 @@
     <title>COVID-19 Simulator</title>
     <!-- Vendor CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" crossorigin="anonymous">
 
     <!-- User CSS -->
     <link href="../css/community.css" rel="stylesheet"/>
@@ -14,8 +15,68 @@
 <body>
 
 <nav class="navbar navbar-light bg-light">
-    <span class="navbar-brand mb-0 h1">Community Spread Simulator</span>
+    <span class="navbar-brand mb-0 h1">Community Spread Simulator <i class="far fa-question-circle" id="simulation-instructions"></i></span>
 </nav>
+
+<!-- Simulation Instruction Modal -->
+<div class="modal fade" id="instruction-modal" tabindex="-1" role="dialog" aria-labelledby="instruction-modal-title" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="instruction-modal-title">Instructions - Community Spread Simulator</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>This simulator is intended to provide experimental results that follow the Susceptible-Infected-Resistant (SIR) Model.</p>
+                <p><b>Susceptible</b> - Individuals who are capable of contracting the disease.</p>
+                <p><b>Infected</b> - Individuals who have contracted the disease and are capable of spreading the disease.</p>
+                <p><b>Resistant</b> - Individuals who no longer have the disease and are not capable of spreading the disease (dead or recovered).</p>
+
+                <p>The primary purpose of this simulator is to illustrate the importance of the social distancing measures put in place.
+                This is captured in the <b>"Social Distancing Factor"</b> in the control panel. This describes the percentage of individuals in place
+                and not moving in the simulation. <b>As a result, I encourage you to run simulations with a low Social Distancing Factor (~10%) and
+                        compare the results with a high Social Distancing Factor (~90%).</b></p>
+
+                <p><b>If you want to quickly jump in, there are presets available for COVID-19 and the Spanish Flu based on data as of 4/27/2020.</b></p>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Understood</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Control Panel Instruction Modal -->
+<div class="modal fade" id="control-panel-modal" tabindex="-1" role="dialog" aria-labelledby="control-panel-modal-title" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="control-panel-modal-title">Instructions - Control Panel</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><b>Presets</b> - Prepopulated simulation values for COVID-19 and the Spanish Flu based on data as of 4/27/20.</p>
+                <p><b>Number of People</b> - Amount of individuals in the simulation space.</p>
+                <p><b>Transmission Rate</b> - The likelihood that a susceptible individual within the infection radius of an infected individual will become infected.</p>
+                <p><b>Death Rate</b> - The likelihood that an infected individual dies and becomes a resistant individual each tick.</p>
+                <p><b>Avg. Incubation Period</b> - The average number of ticks until an infected individual recovers and becomes resistant.</p>
+                <p><b>Infection Radius</b> - The radius by which an infected individual can infect a susceptible individual.</p>
+                <p><b>Social Distancing Factor</b> - The percentage of indiviudals who will not move during the simulation.
+                This factor in the simulation is something that we can control as a society.</p>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Understood</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div class="container-fluid">
 
@@ -30,7 +91,7 @@
 
                 <br>
 
-                <h5 class="text-center">Control Panel</h5>
+                <h5 class="text-center">Control Panel <i class="far fa-question-circle" id="control-panel-instructions"></i></h5>
 
                 <div class="container-fluid" style="text-align: center;">
                     <div class="btn-group">
@@ -52,7 +113,7 @@
                 <div class="container-fluid">
                     <div class="input-group input-group-sm mb-3">
                         <div class="input-group-prepend">
-                            <span class="input-group-text" id="number-of-blocks-label">Number of Blocks</span>
+                            <span class="input-group-text" id="number-of-blocks-label">Number of People</span>
                         </div>
                         <input type="number" class="form-control" id="number-of-blocks" aria-describedby="number-of-blocks-label" value="1000">
                     </div>
@@ -111,7 +172,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="social-distancing-factor-label">Social Distancing Factor</span>
                         </div>
-                        <input type="number" class="form-control" id="social-distancing-factor" aria-describedby="social-distancing-factor-label" value="10">
+                        <input type="number" class="form-control" id="social-distancing-factor" aria-describedby="social-distancing-factor-label" value="90">
                         <div class="input-group-append">
                             <span class="input-group-text">%</span>
                         </div>

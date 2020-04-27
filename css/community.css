@@ -41,3 +41,11 @@ input {
 #simulation-container .dead {
     background-color: purple;
 }
+
+#simulation-instructions {
+    cursor: pointer;
+}
+
+#control-panel-instructions {
+    cursor: pointer;
+}

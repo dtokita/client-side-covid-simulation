@@ -217,6 +217,8 @@ function simulationEndCheck() {
 
 $(function() {
 
+
+
     let queryString = window.location.search;
     let urlParams = new URLSearchParams(queryString);
 
@@ -332,6 +334,14 @@ $(function() {
         recoveryInterval = setInterval(recoveryCheck, 1000);
         graphInterval = setInterval(updateGraph, 1000);
         simulationInterval = setInterval(simulationEndCheck, 1000);
+    })
+
+    $('#simulation-instructions').click(function() {
+        $('#instruction-modal').modal('show');
+    });
+
+    $('#control-panel-instructions').click(function() {
+        $('#control-panel-modal').modal('show');
     })
 
 });
