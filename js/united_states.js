@@ -1,4 +1,4 @@
-states_hash =
+let states_hash =
     {
         'Alabama': 'US-AL',
         'Alaska': 'US-AK',
@@ -54,7 +54,7 @@ states_hash =
         'Wyoming': 'US-WY'
     };
 
-var dataDescription = {
+let dataDescription = {
     'Incident_Rate': 'Confirmed cases per 100,000 persons',
     'Mortality_Rate': '(Number of recorded deaths * 100) / (Number of confirmed cases)',
     'Testing_Rate': 'Total number of people tested per 100,000 persons',
@@ -64,6 +64,195 @@ var dataDescription = {
     'Recovered': 'Aggregated recovered case count for the state (if data has been provided)',
     'People_Tested': 'Total number of people who have been tested for the state',
     'People_Hospitalized': 'Total number of people who have been hospitalized for the state'
+};
+
+let democraticStates2016 = [
+    "US-CA",
+    "US-CO",
+    "US-CT",
+    "US-DE",
+    "US-HI",
+    "US-IL",
+    "US-ME",
+    "US-MD",
+    "US-MA",
+    "US-MN",
+    "US-NV",
+    "US-NH",
+    "US-NJ",
+    "US-NM",
+    "US-NY",
+    "US-OR",
+    "US-RI",
+    "US-VT",
+    "US-VA",
+    "US-WA"
+];
+
+let republicanStates2016 = [
+    "US-AL",
+    "US-AK",
+    "US-AZ",
+    "US-AR",
+    "US-FL",
+    "US-GA",
+    "US-ID",
+    "US-IN",
+    "US-IA",
+    "US-KS",
+    "US-KY",
+    "US-LA",
+    "US-MI",
+    "US-MS",
+    "US-MO",
+    "US-MT",
+    "US-NE",
+    "US-NC",
+    "US-ND",
+    "US-OH",
+    "US-OK",
+    "US-PA",
+    "US-SC",
+    "US-SD",
+    "US-TN",
+    "US-TX",
+    "US-UT",
+    "US-WV",
+    "US-WI",
+    "US-WY"
+];
+
+let democraticStatesGovernor = [
+    "US-CA",
+    "US-CO",
+    "US-CT",
+    "US-DE",
+    "US-HI",
+    "US-IL",
+    "US-KS",
+    "US-KY",
+    "US-LA",
+    "US-ME",
+    "US-MI",
+    "US-MN",
+    "US-MT",
+    "US-NV",
+    "US-NJ",
+    "US-NM",
+    "US-NY",
+    "US-NC",
+    "US-OR",
+    "US-PA",
+    "US-RI",
+    "US-VA",
+    "US-WA",
+    "US-WI"
+];
+
+let republicanStatesGovernor = [
+    "US-AL",
+    "US-AK",
+    "US-AZ",
+    "US-AR",
+    "US-FL",
+    "US-GA",
+    "US-ID",
+    "US-IN",
+    "US-IA",
+    "US-MD",
+    "US-MA",
+    "US-MS",
+    "US-MO",
+    "US-NE",
+    "US-NH",
+    "US-ND",
+    "US-OH",
+    "US-OK",
+    "US-SC",
+    "US-SD",
+    "US-TN",
+    "US-TX",
+    "US-UT",
+    "US-VT",
+    "US-WV",
+    "US-WY"
+];
+
+let westStates = [
+    "US-WA",
+    "US-OR",
+    "US-CA",
+    "US-ID",
+    "US-NV",
+    "US-MT",
+    "US-WY",
+    "US-UT",
+    "US-AZ",
+    "US-CO",
+    "US-NM"
+];
+
+let midwestStates = [
+    "US-ND",
+    "US-SD",
+    "US-NE",
+    "US-KS",
+    "US-MN",
+    "US-IA",
+    "US-MO",
+    "US-WI",
+    "US-IL",
+    "US-MI",
+    "US-IN",
+    "US-OH"
+];
+
+let southStates = [
+    "US-TX",
+    "US-OK",
+    "US-AR",
+    "US-LA",
+    "US-KY",
+    "US-TN",
+    "US-MS",
+    "US-AL",
+    "US-GA",
+    "US-FL",
+    "US-SC",
+    "US-NC",
+    "US-VA",
+    "US-WV",
+    "US-MD",
+    "US-DE"
+];
+
+let northeastStates = [
+    "US-PA",
+    "US-NY",
+    "US-NJ",
+    "US-VT",
+    "US-MA",
+    "US-CT",
+    "US-RI",
+    "US-NH",
+    "US-ME"
+];
+
+let pacificStates = [
+    "US-AK",
+    "US-HI"
+];
+
+let globalFilters = {
+    "democraticStates2016": democraticStates2016,
+    "republicanStates2016": republicanStates2016,
+    "democraticStatesGovernor": democraticStatesGovernor,
+    "republicanStatesGovernor": republicanStatesGovernor,
+    "westStates": westStates,
+    "midwestStates": midwestStates,
+    "southStates": southStates,
+    "northeastStates": northeastStates,
+    "pacificStates": pacificStates
 };
 
 var globalRows = null;
@@ -78,6 +267,16 @@ function incidentRate(rows) {
 }
 
 $(function () {
+
+    $('#instruction-modal').modal('show');
+
+    $('#data-explorer-instructions').click(function () {
+        $('#instruction-modal').modal('show');
+    });
+
+    $('#control-panel-instructions').click(function() {
+        $('#control-panel-modal').modal('show');
+    });
 
     am4core.ready(function () {
 
@@ -122,26 +321,41 @@ $(function () {
         var hs = polygonTemplate.states.create("hover");
         hs.properties.fill = am4core.color("#3c5bdc");
 
-        $('#data-field').change(function() {
+        $('.data-input').change(function () {
             let excludes = $('#exclude :selected').map(function() {
                 return this.value
             }).get();
 
+            let filters = $('#filter :selected').map(function() {
+                return this.value
+            }).get();
+
             let val = $('#data-field :selected').val();
+
+            var includes = [];
+
+            for (var i = 0; i < filters.length; i++) {
+                includes += globalFilters[filters[i]];
+            }
+
+            if (includes.length > 0) {
+                polygonSeries.include = includes;
+            } else {
+                polygonSeries.include = null;
+            }
 
             polygonSeries.exclude = excludes;
 
             polygonSeries.data = globalRows.map(function(x) {
 
                 if (excludes.includes(states_hash[x['Province_State']])) {
-
                     return {
                         'id': states_hash[x['Province_State']],
                         'value': 0
                     }
                 }
 
-                if (x['Province_State'] in states_hash) {
+                if (x['Province_State'] in states_hash && (includes.includes(states_hash[x['Province_State']]) || includes.length === 0)) {
                     return {
                         'id': states_hash[x['Province_State']],
                         'value': x[val]
@@ -155,46 +369,7 @@ $(function () {
                 }
 
             });
-
-            $('#data-description').val(dataDescription[val]);
-
-        });
-
-        $('#exclude').change(function() {
-            let excludes = $('#exclude :selected').map(function() {
-                return this.value
-            }).get();
-
-            let val = $('#data-field :selected').val();
-
-            polygonSeries.exclude = excludes;
-
-            polygonSeries.data = globalRows.map(function(x) {
-
-                if (excludes.includes(states_hash[x['Province_State']])) {
-
-                    return {
-                        'id': states_hash[x['Province_State']],
-                        'value': 0
-                    }
-                }
-
-                if (x['Province_State'] in states_hash) {
-                    return {
-                        'id': states_hash[x['Province_State']],
-                        'value': x[val]
-                    }
-                } else {
-
-                    return {
-                        'id': states_hash[x['Province_State']],
-                        'value': 0
-                    }
-                }
-
-            });
-
-        });
+        })
 
     });
 

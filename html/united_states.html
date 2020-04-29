@@ -16,8 +16,56 @@
 <body>
 
 <nav class="navbar navbar-light bg-light">
-    <span class="navbar-brand mb-0 h1">United States COVID-19 Data Explorer <i class="far fa-question-circle" id="simulation-instructions"></i></span>
+    <span class="navbar-brand mb-0 h1">United States COVID-19 Data Explorer <i class="far fa-question-circle" id="data-explorer-instructions"></i></span>
 </nav>
+
+<!-- Data Explorer Instruction Modal -->
+<div class="modal fade" id="instruction-modal" tabindex="-1" role="dialog" aria-labelledby="instruction-modal-title" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="instruction-modal-title">Instructions - Data Explorer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>This data explorer is intended to provide a visual way to explore COVID-19 data.</p>
+                <p>Use the Control Panel to change the data field and states to visualize.</p>
+
+                <p>Data is sourced from <b>https://github.com/CSSEGISandData/COVID-19</b>.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Understood</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Control Panel Instruction Modal -->
+<div class="modal fade" id="control-panel-modal" tabindex="-1" role="dialog" aria-labelledby="control-panel-modal-title" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="control-panel-modal-title">Instructions - Control Panel</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><b>Date</b> - Date of data used in the visualization, currently defaults to yesterday.</p>
+                <p><b>Data Field</b> - Data field to visualize on the map.</p>
+                <p><b>Description</b> - Description of the data field selected.</p>
+                <p><b>Filter</b> - Preset grouping of states to explore. (Positive Filter)</p>
+                <p><b>Exclude</b> - States to remove from the visualization. (Negative Filter)</p>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Understood</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="fluid-container">
     <div class="row">
@@ -45,7 +93,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="data-field-label">Data Field</span>
                         </div>
-                        <select class="form-control" id="data-field" aria-describedby="data-field-label">
+                        <select class="form-control data-input" id="data-field" aria-describedby="data-field-label">
                             <option value="Incident_Rate">Incident Rate</option>
                             <option value="Mortality_Rate">Mortality Rate</option>
                             <option value="Testing_Rate">Testing Rate</option>
@@ -71,9 +119,28 @@
                 <div class="container-fluid">
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
+                            <span class="input-group-text" id="filter-label">Filter</span>
+                        </div>
+                        <select class="form-control selectpicker data-input" id="filter" aria-describedby="exclude-label" multiple>
+                            <option value="democraticStates2016">Democratic (2016 Election)</option>
+                            <option value="republicanStates2016">Republican (2016 Election)</option>
+                            <option value="democraticStatesGovernor">Democratic (Governor)</option>
+                            <option value="republicanStatesGovernor">Republican (Governor)</option>
+                            <option value="westStates">West (Census)</option>
+                            <option value="midwestStates">Midwest (Census)</option>
+                            <option value="southStates">South (Census)</option>
+                            <option value="northeastStates">Northeast (Census)</option>
+                            <option value="pacificStates">Pacific (Census)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="container-fluid">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
                             <span class="input-group-text" id="exclude-label">Exclude</span>
                         </div>
-                        <select class="form-control selectpicker" id="exclude" aria-describedby="exclude-label" multiple>
+                        <select class="form-control selectpicker data-input" id="exclude" aria-describedby="exclude-label" multiple>
 
                         </select>
                     </div>

@@ -217,6 +217,8 @@ function simulationEndCheck() {
 
 $(function() {
 
+    $('#instruction-modal').modal('show');
+
     let queryString = window.location.search;
     let urlParams = new URLSearchParams(queryString);
 
