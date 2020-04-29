@@ -1,0 +1,12 @@
+#map-container {
+    height: 80vh;
+}
+
+#control-panel-container {
+    border: 1px solid white;
+}
+
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}

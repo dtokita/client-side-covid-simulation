@@ -217,8 +217,6 @@ function simulationEndCheck() {
 
 $(function() {
 
-
-
     let queryString = window.location.search;
     let urlParams = new URLSearchParams(queryString);
 
