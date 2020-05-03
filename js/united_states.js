@@ -297,7 +297,20 @@ $(function () {
 
 
         var today = new Date();
-        var date = '0'+(today.getMonth()+1)+'-'+(today.getDate()-1)+'-'+(today.getFullYear());
+
+        var month = today.getMonth() + 1;
+
+        if (month.toString().length == 1) {
+            month = '0' + month;
+        }
+
+        var day = today.getDate() - 1;
+
+        if (day.toString().length == 1) {
+            day = '0' + day;
+        }
+
+        var date = month + '-' + day + '-' + today.getFullYear();
 
         $('#date').val(date);
 
