@@ -256,6 +256,10 @@ let globalFilters = {
 };
 
 var globalRows = null;
+var countyRows = null;
+
+var shownStatesCounty = [];
+var shownStatesCountySeries = [];
 
 function incidentRate(rows) {
     return rows.map(function(x) {
@@ -280,22 +284,6 @@ $(function () {
 
     am4core.ready(function () {
 
-        am4core.useTheme(am4themes_animated);
-
-        var chart = am4core.create("map-container", am4maps.MapChart);
-        chart.geodata = am4geodata_usaLow;
-        chart.projection = new am4maps.projections.AlbersUsa();
-
-        var polygonSeries = chart.series.push(new am4maps.MapPolygonSeries());
-        polygonSeries.heatRules.push({
-            property: "fill",
-            target: polygonSeries.mapPolygons.template,
-            min: chart.colors.getIndex(1).brighten(1),
-            max: chart.colors.getIndex(1).brighten(-0.3)
-        });
-        polygonSeries.useGeodata = true;
-
-
         var today = new Date();
 
         var month = today.getMonth() + 1;
@@ -314,9 +302,96 @@ $(function () {
 
         $('#date').val(date);
 
+        am4core.useTheme(am4themes_animated);
+
+        var chart = am4core.create("map-container", am4maps.MapChart);
+        chart.geodata = am4geodata_usaLow;
+        chart.projection = new am4maps.projections.AlbersUsa();
+
+        var polygonSeries = chart.series.push(new am4maps.MapPolygonSeries());
+        polygonSeries.heatRules.push({
+            property: "fill",
+            target: polygonSeries.mapPolygons.template,
+            min: chart.colors.getIndex(1).brighten(2),
+            max: chart.colors.getIndex(1).brighten(-1)
+        });
+        polygonSeries.useGeodata = true;
+
+        var polygonTemplate = polygonSeries.mapPolygons.template;
+
+        polygonTemplate.events.on("hit", function(ev) {
+            ev.target.series.chart.zoomToMapObject(ev.target);
+
+            $('#data-field').hide();
+            $('#exclude-container').hide();
+            $('#filter-container').hide();
+            $('#return-to-state-container').show();
+            $('#data-field-county').show();
+
+            let val = $('#data-field-county :selected').val();
+            $('#data-description').val(dataDescription[val]);
+
+            let targetName = ev.target.dataItem.dataContext.id;
+
+            shownStatesCounty.push(targetName);
+
+            let abbr = (targetName[3] + targetName[4]).toLowerCase();
+
+            tempRows = countyRows.filter(function(x) {
+                return x['Province_State'] == ev.target.dataItem.dataContext.name;
+            });
+
+            polygonSeries.data = globalRows.map(function(x) {
+                return {
+                    'id': '',
+                    'value': 0
+                }
+            });
+
+            $.getScript('https://www.amcharts.com/lib/4/geodata/region/usa/' + abbr + 'Low.js', function()
+            {
+                var tempSeries = chart.series.push(new am4maps.MapPolygonSeries());
+                tempSeries.geodata = eval('am4geodata_region_usa_' + abbr + 'Low');
+
+                tempSeries.data = tempRows.map(function(x) {
+                    return {
+                        'id': x['FIPS'],
+                        'value': x[$('#data-field-county :selected').val()]
+                    }
+                });
+
+                heatLegend.series = tempSeries;
+
+                var tempTemplate = tempSeries.mapPolygons.template;
+                tempTemplate.tooltipText = "{name}: {value}";
+                tempTemplate.nonScalingStroke = true;
+                tempTemplate.strokeWidth = 0.5;
+
+                tempSeries.heatRules.push({
+                    property: "fill",
+                    target: tempSeries.mapPolygons.template,
+                    min: chart.colors.getIndex(1).brighten(2),
+                    max: chart.colors.getIndex(1).brighten(-1)
+                });
+
+                var temphs = tempTemplate.states.create("hover");
+                temphs.properties.fill = am4core.color("#3c5bdc");
+
+                shownStatesCountySeries.push({
+                    series: tempSeries,
+                    state: ev.target.dataItem.dataContext.name
+                });
+
+            });
+        });
+
         Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports_us/' + date + '.csv', function (err, rows) {
             polygonSeries.data = incidentRate(rows);
             globalRows = rows;
+        });
+
+        Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/' + date + '.csv', function (err, rows) {
+            countyRows = rows;
         });
 
         var heatLegend = chart.createChild(am4maps.HeatLegend);
@@ -382,6 +457,53 @@ $(function () {
                 }
 
             });
+
+            $('#data-description').val(dataDescription[val]);
+        });
+
+        $('.data-input-county').change(function() {
+            let excludes = $('#exclude :selected').map(function() {
+                return this.value
+            }).get();
+
+            let filters = $('#filter :selected').map(function() {
+                return this.value
+            }).get();
+
+            let val = $('#data-field-county :selected').val();
+
+            var includes = [];
+
+            for (var i = 0; i < filters.length; i++) {
+                includes += globalFilters[filters[i]];
+            }
+
+            if (includes.length > 0) {
+                polygonSeries.include = includes;
+            } else {
+                polygonSeries.include = null;
+            }
+
+            polygonSeries.exclude = excludes;
+
+            tempRows = countyRows.filter(function(x) {
+                return shownStatesCounty.includes(states_hash[x['Province_State']]);
+            });
+
+            $.each(shownStatesCountySeries, function(key, value) {
+                tempRows = countyRows.filter(function(x) {
+                    return x['Province_State'] == value['state']
+                });
+
+                value['series'].data = tempRows.map(function(x) {
+                    return {
+                        'id': x['FIPS'],
+                        'value': x[val]
+                    }
+                })
+            });
+
+            $('#data-description').val(dataDescription[val]);
         })
 
     });
@@ -400,5 +522,9 @@ $(function () {
 
         $('#exclude').append(opt);
     }
+
+    $('#return-to-state').click(function() {
+        location.reload();
+    })
 
 });
