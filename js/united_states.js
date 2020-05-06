@@ -1,3 +1,6 @@
+// Designed by dtokita unless otherwise noted
+
+// Object to convert state name to ISO codes used in map
 let states_hash =
     {
         'Alabama': 'US-AL',
@@ -54,6 +57,7 @@ let states_hash =
         'Wyoming': 'US-WY'
     };
 
+// Object to map description of the data field to data field
 let dataDescription = {
     'Incident_Rate': 'Confirmed cases per 100,000 persons',
     'Mortality_Rate': '(Number of recorded deaths * 100) / (Number of confirmed cases)',
@@ -66,6 +70,7 @@ let dataDescription = {
     'People_Hospitalized': 'Total number of people who have been hospitalized for the state'
 };
 
+// List containing democratic states based on the 2016 Election
 let democraticStates2016 = [
     "US-CA",
     "US-CO",
@@ -89,6 +94,7 @@ let democraticStates2016 = [
     "US-WA"
 ];
 
+// List containing republican states based on the 2016 Election
 let republicanStates2016 = [
     "US-AL",
     "US-AK",
@@ -122,6 +128,7 @@ let republicanStates2016 = [
     "US-WY"
 ];
 
+// List of democratic states based on the current governor
 let democraticStatesGovernor = [
     "US-CA",
     "US-CO",
@@ -149,6 +156,7 @@ let democraticStatesGovernor = [
     "US-WI"
 ];
 
+// List of republican states based on the current governor
 let republicanStatesGovernor = [
     "US-AL",
     "US-AK",
@@ -178,6 +186,7 @@ let republicanStatesGovernor = [
     "US-WY"
 ];
 
+// States in Western region as defined in the Census
 let westStates = [
     "US-WA",
     "US-OR",
@@ -192,6 +201,7 @@ let westStates = [
     "US-NM"
 ];
 
+// States in Midwest region as defined in Census
 let midwestStates = [
     "US-ND",
     "US-SD",
@@ -207,6 +217,7 @@ let midwestStates = [
     "US-OH"
 ];
 
+// States in South region as defined in Census
 let southStates = [
     "US-TX",
     "US-OK",
@@ -226,6 +237,7 @@ let southStates = [
     "US-DE"
 ];
 
+// States in Northeastern region as defined in Census
 let northeastStates = [
     "US-PA",
     "US-NY",
@@ -238,11 +250,13 @@ let northeastStates = [
     "US-ME"
 ];
 
+// States in Pacific region as defined in Census
 let pacificStates = [
     "US-AK",
     "US-HI"
 ];
 
+// Object containing the filter name mapping to the list of states
 let globalFilters = {
     "democraticStates2016": democraticStates2016,
     "republicanStates2016": republicanStates2016,
@@ -255,12 +269,15 @@ let globalFilters = {
     "pacificStates": pacificStates
 };
 
+// Globals to hold the data from get requests made to COVID-19 repository
 var globalRows = null;
 var countyRows = null;
 
+// Globals to maintain the current states with counties shown, used during data field changes
 var shownStatesCounty = [];
 var shownStatesCountySeries = [];
 
+// Helper function to populate US states map with the incident rate
 function incidentRate(rows) {
     return rows.map(function(x) {
         return {
@@ -272,6 +289,7 @@ function incidentRate(rows) {
 
 $(function () {
 
+    // Show instruction modal on page load
     $('#instruction-modal').modal('show');
 
     $('#data-explorer-instructions').click(function () {
@@ -284,6 +302,7 @@ $(function () {
 
     am4core.ready(function () {
 
+        // Define yesterday's date in format stored in Github CSVs
         var today = new Date();
 
         var month = today.getMonth() + 1;
@@ -300,14 +319,17 @@ $(function () {
 
         var date = month + '-' + day + '-' + today.getFullYear();
 
+        // Populate control panel with yesterday's date
         $('#date').val(date);
 
         am4core.useTheme(am4themes_animated);
 
+        // Fill the map container with a map of the US using Albers projection
         var chart = am4core.create("map-container", am4maps.MapChart);
         chart.geodata = am4geodata_usaLow;
         chart.projection = new am4maps.projections.AlbersUsa();
 
+        // Create rules for shading the states based on the geodata presented
         var polygonSeries = chart.series.push(new am4maps.MapPolygonSeries());
         polygonSeries.heatRules.push({
             property: "fill",
@@ -317,11 +339,15 @@ $(function () {
         });
         polygonSeries.useGeodata = true;
 
+        // Add listener for a click onto a specific state
         var polygonTemplate = polygonSeries.mapPolygons.template;
 
         polygonTemplate.events.on("hit", function(ev) {
+
+            // Zoom into the state that was clicked
             ev.target.series.chart.zoomToMapObject(ev.target);
 
+            // Change the control panel to county view
             $('#data-field').hide();
             $('#exclude-container').hide();
             $('#filter-container').hide();
@@ -331,16 +357,20 @@ $(function () {
             let val = $('#data-field-county :selected').val();
             $('#data-description').val(dataDescription[val]);
 
+            // Get state that was targeted by zoom
             let targetName = ev.target.dataItem.dataContext.id;
 
+            // Add state to list of states with county shown
             shownStatesCounty.push(targetName);
 
             let abbr = (targetName[3] + targetName[4]).toLowerCase();
 
+            // Filter down data set for performance purposes
             tempRows = countyRows.filter(function(x) {
                 return x['Province_State'] == ev.target.dataItem.dataContext.name;
             });
 
+            // Initialize blank values for US map behind county maps to show outline of which states can be selected
             polygonSeries.data = globalRows.map(function(x) {
                 return {
                     'id': '',
@@ -348,11 +378,13 @@ $(function () {
                 }
             });
 
+            // Get GeoJSON that describes the county lines for the particular zoomed state
             $.getScript('https://www.amcharts.com/lib/4/geodata/region/usa/' + abbr + 'Low.js', function()
             {
                 var tempSeries = chart.series.push(new am4maps.MapPolygonSeries());
                 tempSeries.geodata = eval('am4geodata_region_usa_' + abbr + 'Low');
 
+                // Populate county data based on FIPS code
                 tempSeries.data = tempRows.map(function(x) {
                     return {
                         'id': x['FIPS'],
@@ -362,6 +394,7 @@ $(function () {
 
                 heatLegend.series = tempSeries;
 
+                // Restablish tooltip text, legend and hover parameters
                 var tempTemplate = tempSeries.mapPolygons.template;
                 tempTemplate.tooltipText = "{name}: {value}";
                 tempTemplate.nonScalingStroke = true;
@@ -377,6 +410,7 @@ $(function () {
                 var temphs = tempTemplate.states.create("hover");
                 temphs.properties.fill = am4core.color("#3c5bdc");
 
+                // Save reference to series for data update at a later time
                 shownStatesCountySeries.push({
                     series: tempSeries,
                     state: ev.target.dataItem.dataContext.name
@@ -385,15 +419,18 @@ $(function () {
             });
         });
 
+        // Get daily US state data
         Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports_us/' + date + '.csv', function (err, rows) {
             polygonSeries.data = incidentRate(rows);
             globalRows = rows;
         });
 
+        // Get daily US county data
         Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/' + date + '.csv', function (err, rows) {
             countyRows = rows;
         });
 
+        // Establish US state chart styling, including legend, tooltip, and hover listener
         var heatLegend = chart.createChild(am4maps.HeatLegend);
         heatLegend.series = polygonSeries;
         heatLegend.align = "right";
@@ -409,15 +446,20 @@ $(function () {
         var hs = polygonTemplate.states.create("hover");
         hs.properties.fill = am4core.color("#3c5bdc");
 
+        // Whenver the data field, exclude, or include selects are changed
         $('.data-input').change(function () {
+
+            // Get excludes
             let excludes = $('#exclude :selected').map(function() {
                 return this.value
             }).get();
 
+            // Get includes
             let filters = $('#filter :selected').map(function() {
                 return this.value
             }).get();
 
+            // Get current data field
             let val = $('#data-field :selected').val();
 
             var includes = [];
@@ -426,6 +468,7 @@ $(function () {
                 includes += globalFilters[filters[i]];
             }
 
+            // Pass the map includes and excludes
             if (includes.length > 0) {
                 polygonSeries.include = includes;
             } else {
@@ -434,8 +477,10 @@ $(function () {
 
             polygonSeries.exclude = excludes;
 
+            // Populate map with data based on daily pull
             polygonSeries.data = globalRows.map(function(x) {
 
+                // Do not populate data for excluded states
                 if (excludes.includes(states_hash[x['Province_State']])) {
                     return {
                         'id': states_hash[x['Province_State']],
@@ -443,6 +488,7 @@ $(function () {
                     }
                 }
 
+                // If the state is in includes if includes exist
                 if (x['Province_State'] in states_hash && (includes.includes(states_hash[x['Province_State']]) || includes.length === 0)) {
                     return {
                         'id': states_hash[x['Province_State']],
@@ -458,18 +504,24 @@ $(function () {
 
             });
 
+            // Update data description accordingly
             $('#data-description').val(dataDescription[val]);
         });
 
+        // Similar data-input update mechanism for counties
         $('.data-input-county').change(function() {
+
+            // Get excludes
             let excludes = $('#exclude :selected').map(function() {
                 return this.value
             }).get();
 
+            // Get includes
             let filters = $('#filter :selected').map(function() {
                 return this.value
             }).get();
 
+            // Get current county data field
             let val = $('#data-field-county :selected').val();
 
             var includes = [];
@@ -478,6 +530,7 @@ $(function () {
                 includes += globalFilters[filters[i]];
             }
 
+            // Pass map state includes and excludes
             if (includes.length > 0) {
                 polygonSeries.include = includes;
             } else {
@@ -486,10 +539,12 @@ $(function () {
 
             polygonSeries.exclude = excludes;
 
+            // Filter down rows to those with counties showing for performance purposes
             tempRows = countyRows.filter(function(x) {
                 return shownStatesCounty.includes(states_hash[x['Province_State']]);
             });
 
+            // Iterate through states with counties showing and populate the map with data if it exists
             $.each(shownStatesCountySeries, function(key, value) {
                 tempRows = countyRows.filter(function(x) {
                     return x['Province_State'] == value['state']
@@ -503,11 +558,13 @@ $(function () {
                 })
             });
 
+            // Update data description accordingly
             $('#data-description').val(dataDescription[val]);
         })
 
     });
 
+    // Animate control panel borders
     anime({
         targets: '.control-panel-container',
         borderColor: '#000000',
@@ -517,6 +574,7 @@ $(function () {
         easing: 'easeInOutQuad'
     });
 
+    // Populate excludes multiple select from states hash
     for (let [key, value] of Object.entries(states_hash)) {
         let opt = '<option value="' + value + '">' + key + '</option>';
 
