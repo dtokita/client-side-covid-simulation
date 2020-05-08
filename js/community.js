@@ -87,7 +87,7 @@ function getSimulationRect() {
 }
 
 // Function to determine if an infected individual infects a vulnerable individual
-function infectionCheck() {
+async function infectionCheck() {
 
     // Get infected individuals
     let infected = document.getElementsByClassName('infected');
@@ -123,7 +123,7 @@ function infectionCheck() {
 }
 
 // Function to check if an infected individual will die on this tick
-function deathCheck() {
+async function deathCheck() {
 
     // Get infected individuals
     let infected = document.getElementsByClassName('infected');
@@ -143,7 +143,7 @@ function deathCheck() {
 }
 
 // Function to check if infected individual recovers
-function recoveryCheck() {
+async function recoveryCheck() {
 
     // Get infected individuals
     let infected = document.getElementsByClassName('infected');
